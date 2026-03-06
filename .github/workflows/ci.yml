@@ -1,6 +1,7 @@
 name: Java CI for hw01
 
 on:
+  workflow_dispatch:
   push:
     branches: [ "main", "hw01" ]
     paths:         # Запускать CI только при изменениях в hw01/
