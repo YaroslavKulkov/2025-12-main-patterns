@@ -1,0 +1,28 @@
+name: Java CI for hw01
+
+on:
+  push:
+    branches: [ "main", "hw01" ]
+    paths:         # Запускать CI только при изменениях в hw01/
+      - 'hw01/**'
+  pull_request:
+    branches: [ "main", "hw01" ]
+    paths:
+      - 'hw01/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Build and test hw01
+        working-directory: ./hw01
+        run: mvn -B test
