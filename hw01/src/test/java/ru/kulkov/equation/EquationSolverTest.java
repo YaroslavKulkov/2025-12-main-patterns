@@ -2,6 +2,11 @@ package ru.kulkov.equation;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -73,6 +78,36 @@ public class EquationSolverTest {
                 IllegalArgumentException.class,
                 ()->solver.solve(1, Double.MAX_VALUE, 1),
                 "При MAX_VALUE должно выбрасываться исключение IllegalArgumentException"
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideNaNTestCases")
+    void solve_WhenNumberIsNaN_ThrowExceptionN(double a, double b, double c) {
+        //Посмотреть какие еще значения могут принимать числа типа double, кроме числовых и написать тест с их использованием на все коэффициенты.
+        // solve должен выбрасывать исключение.
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> solver.solve(a, b, c),
+                "При любом параметре равном NaN должно выбрасываться исключение IllegalArgumentException"
+        );
+    }
+
+    private static Stream<Arguments> provideNaNTestCases() {
+        return Stream.of(
+                // Проверки на NaN
+                Arguments.of(Double.NaN, Double.NaN, Double.NaN),
+                Arguments.of(Double.NaN, 1.0, 2.0),
+                Arguments.of(1.0, Double.NaN, 2.0),
+                Arguments.of(1.0, 2.0, Double.NaN),
+                Arguments.of(Double.NaN, Double.NaN, 3.0),
+                Arguments.of(1.0, Double.NaN, 3.0),
+
+                // Проверки на INFINITY
+                Arguments.of(Double.POSITIVE_INFINITY, 1.0, 2.0),
+                Arguments.of(1.0, Double.POSITIVE_INFINITY, 2.0),
+                Arguments.of(1.0, 1.0, Double.POSITIVE_INFINITY),
+                Arguments.of(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY)
         );
     }
 }
