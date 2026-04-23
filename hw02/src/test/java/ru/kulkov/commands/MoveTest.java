@@ -12,9 +12,9 @@ import ru.kulkov.geometry.Point;
 import ru.kulkov.geometry.Velocity;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class MoveTest {
@@ -62,5 +62,34 @@ class MoveTest {
         Move moveCommand = new Move(movable);
 
         assertThrows(IllegalStateException.class, moveCommand::execute);
+    }
+
+    @Test
+    @DisplayName("Попытка сдвинуть объект, у которого невозможно прочитать значение мгновенной скорости, приводит к ошибке")
+    void moveShouldThrowExceptionWhenVelocityNotReadable(@Mock UObject uObject) {
+        when(uObject.getProperty("location", Point.class)).thenReturn(new Point(12, 5));
+        when(uObject.getProperty("velocity", Velocity.class)).thenReturn(null);
+
+        Movable movable = new MovingObjectAdaptor(uObject);
+        Move moveCommand = new Move(movable);
+
+        assertThrows(IllegalStateException.class, moveCommand::execute);
+    }
+
+    @Test
+    @DisplayName("Попытка сдвинуть объект, у которого невозможно изменить положение в пространстве, приводит к ошибке")
+    void moveShouldThrowExceptionWhenLocationCannotBeChanged(@Mock UObject uObject) {
+        Point startLocation = new Point(12, 5);
+        Velocity velocity = new Velocity(-7, 3);
+        when(uObject.getProperty("location", Point.class)).thenReturn(startLocation);
+        when(uObject.getProperty("velocity", Velocity.class)).thenReturn(velocity);
+
+        doThrow(new UnsupportedOperationException("Cannot set location on read-only object"))
+                .when(uObject).setProperty(eq("location"), any(Point.class));
+
+        Movable movable = new MovingObjectAdaptor(uObject);
+        Move moveCommand = new Move(movable);
+
+        assertThrows(UnsupportedOperationException.class, moveCommand::execute);
     }
 }
