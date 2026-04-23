@@ -17,9 +17,9 @@ public class Spaceship implements UObject {
     @Override
     public <T> T getProperty(String key, Class<T> propertyType) {
         Object value = properties.get(key);
-        if (value == null) {
-            throw new IllegalArgumentException("Property '" + key + "' not found in UObject");
-        }
+//        if (value == null) {
+//            return null;
+//        }
         return propertyType.cast(value);
     }
 

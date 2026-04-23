@@ -14,7 +14,11 @@ public class MovingObjectAdaptor implements Movable {
 
     @Override
     public Point getLocation() {
-        return uObject.getProperty("location", Point.class);
+        Point location = uObject.getProperty("location", Point.class);
+        if (location == null) {
+            throw new IllegalStateException("Location property not found");
+        }
+        return location;
     }
 
     @Override
@@ -24,7 +28,11 @@ public class MovingObjectAdaptor implements Movable {
 
     @Override
     public Velocity getVelocity() {
-        return uObject.getProperty("velocity", Velocity.class);
+        Velocity velocity = uObject.getProperty("velocity", Velocity.class);
+        if (velocity == null) {
+            throw new IllegalStateException("Velocity property not found");
+        }
+        return velocity;
     }
 
 }

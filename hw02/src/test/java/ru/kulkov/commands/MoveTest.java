@@ -1,5 +1,6 @@
 package ru.kulkov.commands;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -19,7 +20,8 @@ import static org.mockito.Mockito.when;
 class MoveTest {
 
     @Test
-    void test_PointMoveTo() {
+    @DisplayName("Проверка корректности вычислений статическим Point.moveTo()")
+    void PointMoveToShouldCorrectCalculateLocation() {
         Point start = new Point(12, 5);
         Velocity velocity = new Velocity(-7, 3);
 
@@ -31,6 +33,7 @@ class MoveTest {
     }
 
     @Test
+    @DisplayName("Для объекта, находящегося в точке (12, 5) и движущегося со скоростью (-7, 3) движение меняет положение объекта на (5, 8)")
     void moveShouldUpdateLocationUsingVelocity(@Mock UObject uObject) {
         Point startLocation = new Point(12, 5);
         Velocity velocity = new Velocity(-7, 3);
@@ -48,5 +51,18 @@ class MoveTest {
         Point actual = pointCaptor.getValue();
         assertEquals(5, actual.getX());
         assertEquals(8, actual.getY());
+    }
+
+    @Test
+    @DisplayName("Попытка сдвинуть объект, у которого невозможно прочитать положение в пространстве, приводит к ошибке")
+    void moveShouldThrowExceptionWhenLocationNotReadable(@Mock UObject uObject) {
+        when(uObject.getProperty("location", Point.class))
+                .thenThrow(new IllegalArgumentException("Location property not found"));
+
+        Movable movable = new MovingObjectAdaptor(uObject);
+        Move moveCommand = new Move(movable);
+
+        // when & then
+        assertThrows(IllegalArgumentException.class, moveCommand::execute);
     }
 }
