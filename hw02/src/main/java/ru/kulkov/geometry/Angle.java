@@ -4,10 +4,22 @@ public class Angle {
     private final int degrees;
 
     public Angle(int degrees) {
-        this.degrees = degrees % 360;
+        this.degrees = normalize(degrees);
     }
 
-    public double getRadians() {
-        return Math.toRadians(degrees);
+    private static int normalize(int degrees) {
+        int result = degrees % 360;
+        if (result < 0) {
+            result += 360;
+        }
+        return result;
+    }
+
+    public Angle add(Angle other) {
+        return new Angle(this.degrees + other.degrees);
+    }
+
+    public int getDegrees() {
+        return degrees;
     }
 }
