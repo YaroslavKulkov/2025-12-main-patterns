@@ -7,9 +7,11 @@ import ru.kulkov.geometry.Velocity;
 
 public class MovingObjectAdaptor implements Movable {
     private final UObject uObject;
+
     public MovingObjectAdaptor(UObject uObject) {
         this.uObject = uObject;
     }
+
     @Override
     public Point getLocation() {
         return uObject.getProperty("location", Point.class);
@@ -22,7 +24,7 @@ public class MovingObjectAdaptor implements Movable {
 
     @Override
     public Velocity getVelocity() {
-        return  uObject.getProperty("velocity", Velocity.class);
+        return uObject.getProperty("velocity", Velocity.class);
     }
 
-    }
+}
