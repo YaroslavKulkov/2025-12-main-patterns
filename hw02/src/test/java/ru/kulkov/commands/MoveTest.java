@@ -56,13 +56,11 @@ class MoveTest {
     @Test
     @DisplayName("Попытка сдвинуть объект, у которого невозможно прочитать положение в пространстве, приводит к ошибке")
     void moveShouldThrowExceptionWhenLocationNotReadable(@Mock UObject uObject) {
-        when(uObject.getProperty("location", Point.class))
-                .thenThrow(new IllegalArgumentException("Location property not found"));
+        when(uObject.getProperty("location", Point.class)).thenReturn(null);
 
         Movable movable = new MovingObjectAdaptor(uObject);
         Move moveCommand = new Move(movable);
 
-        // when & then
-        assertThrows(IllegalArgumentException.class, moveCommand::execute);
+        assertThrows(IllegalStateException.class, moveCommand::execute);
     }
 }
