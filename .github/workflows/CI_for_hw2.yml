@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches: [ "main", "hw02" ]
-    paths:
+    paths:         # Запускать CI только при изменениях в hw02/
       - 'hw02/**'
   pull_request:
     branches: [ "main", "hw02" ]
@@ -14,13 +14,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
           java-version: '21'
           distribution: 'temurin'
+
       - name: Build and test hw02
         working-directory: ./hw02
         run: mvn -B test
